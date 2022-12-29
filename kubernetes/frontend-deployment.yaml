@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    io.kompose.service: frontend
+  name: frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: frontend
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        io.kompose.service: frontend
+    spec:
+      containers:
+        - image: docker.io/yunusemretosun/frontend
+          name: frontend
+          resources: {}
+          command: ["sh","-c"]
+          args: ["npm run build; while true; do `echo date`;sleep 5; done"]
+          volumeMounts:
+            - mountPath: /react/build
+              name: react-build
+      restartPolicy: Always
+      volumes:
+        - name: react-build
+          persistentVolumeClaim:
+            claimName: react-build
+status: {}
